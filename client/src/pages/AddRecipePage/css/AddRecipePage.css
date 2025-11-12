@@ -1,0 +1,105 @@
+.add-recipe-page {
+  display: flex;
+  justify-content: center;
+  background: #f4eddd;
+  min-height: 100vh;
+  padding-top: 100px; /* Header 높이만큼 여백 추가 */
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* 레시피 카드 */
+.recipe-card {
+  background: #fff;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 폼 공통 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 700;
+  color: #333;
+  font-size: 14px;
+}
+
+/* 입력 필드 */
+.input-field,
+.textarea-field {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13.5px;
+  outline: none;
+  resize: none;
+}
+
+.input-field:focus,
+.textarea-field:focus {
+  border-color: #95c49c;
+  box-shadow: 0 0 0 3px rgba(149, 196, 156, 0.2);
+}
+
+/* 이미지 업로드 박스 */
+.image-upload-box {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 14px;
+  background: #fafafa;
+}
+
+/* 체크박스, 라디오 */
+.checkbox-group,
+.radio-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #444;
+  font-size: 13px;
+}
+
+/* 버튼 영역 */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.cancel-btn {
+  background: #e7e1ce;
+  color: #333;
+}
+
+.submit-btn {
+  background: #5aa064;
+  color: #fff;
+}
+
+.submit-btn:hover {
+  filter: brightness(0.95);
+}
