@@ -12,7 +12,7 @@ import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RecipeDetailPage from './pages/MainPage/RecipeDetailPage';
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MembershipPage from "./pages/LoginPage/MembershipPage";
-
+import ProfileEdit from "./pages/ProfilePage/components/ProfileEdit";
 const AppContent = () => {
   const location = useLocation();
   const showHeader = !(location.pathname.startsWith('/login') || location.pathname.startsWith('/signup'));
@@ -34,6 +34,7 @@ const AppContent = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/recipes/:recipeId" element={<RecipeDetailPage />} />
         <Route path="/recognized-ingredients" element={<RecognizedIngredientsPage />} />
+        <Route path="/profile-edit" element={<ProfileEdit />} />
       </Routes>
     </div>
   );
