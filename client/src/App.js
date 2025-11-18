@@ -15,7 +15,7 @@ import MembershipPage from "./pages/LoginPage/MembershipPage";
 
 const AppContent = () => {
   const location = useLocation();
-  const showHeader = !(location.pathname.startsWith('/login') || location.pathname.startsWith('/signup') || location.pathname.startsWith('/recipes/'));
+  const showHeader = !(location.pathname.startsWith('/login') || location.pathname.startsWith('/signup'));
 
   return (
     <div className="bg-gray-50 min-h-screen">

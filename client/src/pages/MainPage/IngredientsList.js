@@ -8,12 +8,6 @@ const ingredients = [
   { name: '재료', amount: '수량' },
   { name: '재료', amount: '수량' },
   { name: '재료', amount: '수량' },
-  { name: '재료', amount: '수량' },
-  { name: '재료', amount: '수량' },
-  { name: '재료', amount: '수량' },
-  { name: '재료', amount: '수량' },
-  { name: '재료', amount: '수량' },
-  
 ];
 
 const IngredientsList = () => {
@@ -39,6 +33,12 @@ const IngredientsList = () => {
             </li>
           ))}
         </ul>
+        <button
+          onClick={handleOpenDialog}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        >
+          전체 식재료 보기
+        </button>
       </div>
       {isDialogOpen && <IngredientsDialog onClose={handleCloseDialog} />}
     </div>
