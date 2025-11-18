@@ -2,26 +2,56 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 function RecipeDetailPage() {
-  // useParams 훅을 사용하여 URL 파라미터(라우트의 :recipeId 부분)를 가져옵니다.
   const { recipeId } = useParams();
 
-  // 실제 앱에서는 이 recipeId를 사용하여 Django API에
-  // 해당 레시피의 상세 정보를 요청해야 합니다.
-  // 예: fetch(`/api/recipes/${recipeId}`)
+  // Placeholder data - in a real app, you would fetch this based on recipeId
+  const recipe = {
+    name: `레시피 ${recipeId}`,
+    ingredients: [
+      '당근 2개', '양배추 1개', '양파 1개',
+      '고등어 2마리', '오이 2개', '물 100ml',
+      '...'
+    ],
+    instructions: [
+      '냄비에 물을 끓인다.',
+      '끓는 물에 당근을 넣는다.',
+      '...'
+    ]
+  };
 
   return (
-    <div className="p-8 pt-20">
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold mb-4">레시피 상세 정보</h1>
-        <p className="text-lg mb-4">
-          전달받은 레시피의 고유 ID는 <strong className="text-red-500">{recipeId}</strong> 입니다.
-        </p>
-        <p className="mb-6">
-          이제 이 ID를 사용해서 Django 서버에 상세 데이터를 요청하고, 받아온 데이터를 이 페이지에 채워넣으면 됩니다.
-        </p>
-        <Link to="/home" className="text-blue-600 hover:underline">
-          &larr; 메인 페이지로 돌아가기
+    <div className="p-8 pt-4 w-full h-full bg-white">
+      <div className="p-6 border-b relative">
+        <h1 className="text-2xl font-bold text-center">{recipe.name}</h1>
+        <Link 
+          to="/home" 
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl"
+        >
+          &times;
         </Link>
+      </div>
+      <div className="p-6">
+        <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 mb-6">
+          이미지
+        </div>
+        
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">[재료]</h2>
+          <ul className="grid grid-cols-3 gap-x-4 list-disc list-inside">
+            {recipe.ingredients.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold mb-2">[요리법]</h2>
+          <div className="space-y-2">
+            {recipe.instructions.map((step, index) => (
+              <p key={index}>{step}</p>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
