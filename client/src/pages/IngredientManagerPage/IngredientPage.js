@@ -1,22 +1,42 @@
 // ...existing code...
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 
-const initialIngredients = [
-  { id: 1, name: '방울토마토', category: '채소', amount: 2, expiryDays: 6 },
-  { id: 2, name: '버섯', category: '채소', amount: 3, expiryDays: 2 },
-  { id: 3, name: '양상추', category: '채소', amount: 3, expiryDays: 1 },
-  { id: 4, name: '소고기', category: '육류', amount: 4, expiryDays: 10 },
-  { id: 5, name: '돼지고기', category: '육류', amount: 4, expiryDays: 3 },
-  { id: 6, name: '냉동만두', category: '냉동류', amount: 1, expiryDays: 180 },
-  { id: 7, name: '우유', category: '유제품류', amount: 1, expiryDays: 2 },
-];
-
-const categories = ['전체', '채소', '육류', '냉동류', '유제품류', '유통기한 임박'];
+const categories = ['전체', '신선식품', '유제품', '냉동', '냉동식품', '유통기한 임박'];
 
 const IngredientPage = () => {
-  const [ingredients, setIngredients] = useState(initialIngredients);
+  const [ingredients, setIngredients] = useState([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('전체');
+
+  // 백엔드로부터 데이터를 가져오는 useEffect
+  useEffect(() => {
+    const fetchFridgeItems = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/fridge_items/?user_id=minjae01');
+        // API 응답에 expiryDays가 없으므로 계산해서 추가해주고, amount->quantity, name->ingredient로 맞춰줍니다.
+        const itemsWithExpiryDays = response.data.items.map(item => {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const expiryDate = new Date(item.expiry_date);
+          expiryDate.setHours(0, 0, 0, 0);
+          const diffTime = expiryDate.getTime() - today.getTime();
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          return {
+            ...item,
+            id: item.fridge_id, // id를 백엔드의 fridge_id로 매핑
+            name: item.ingredient, // name을 ingredient로 매핑
+            amount: item.quantity, // amount를 quantity로 매핑
+            expiryDays: diffDays
+          };
+        });
+        setIngredients(itemsWithExpiryDays);
+      } catch (error) {
+        console.error("냉장고 재료를 가져오는데 실패했습니다.", error);
+      }
+    };
+    fetchFridgeItems();
+  }, []);
 
   // 필터링 로직: '유통기한 임박'이면 expiryDays <= 4 아이템만, 그 외엔 카테고리/검색으로 필터링
   const filtered = useMemo(() => {
@@ -37,7 +57,34 @@ const IngredientPage = () => {
     setIngredients((prev) => prev.map((it) => (it.id === id ? { ...it, amount: Math.max(0, it.amount + delta) } : it)));
   };
 
-  const remove = (id) => setIngredients((prev) => prev.filter((it) => it.id !== id));
+  const handleUpdate = async (id, newAmount) => {
+    try {
+      const response = await axios.put(`http://localhost:8000/api/fridge_items/${id}/`, {
+        quantity: newAmount 
+      });
+      // API 응답으로 받은 업데이트된 데이터로 프론트엔드 상태 갱신
+      setIngredients((prev) =>
+        prev.map((it) => (it.id === id ? { ...it, amount: response.data.quantity } : it))
+      );
+      alert("수량이 성공적으로 수정되었습니다.");
+    } catch (error) {
+      console.error("재료 수량 수정에 실패했습니다.", error);
+      alert("수정 실패. 다시 시도해주세요.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("정말 이 재료를 삭제하시겠습니까?")) {
+      try {
+        await axios.delete(`http://localhost:8000/api/delete_ingredient/${id}/`);
+        // API 요청 성공 시, 프론트엔드 상태에서도 해당 아이템 제거
+        setIngredients((prev) => prev.filter((it) => it.id !== id));
+      } catch (error) {
+        console.error("재료 삭제에 실패했습니다.", error);
+        alert("삭제에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
+  };
 
   return (
     <div className="p-8 pt-20">
@@ -126,8 +173,8 @@ const IngredientPage = () => {
                   </td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-2">
-                      <button className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">수정</button>
-                      <button onClick={() => remove(it.id)} className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">삭제</button>
+                      <button onClick={() => handleUpdate(it.id, it.amount)} className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">수정</button>
+                      <button onClick={() => handleDelete(it.id)} className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">삭제</button>
                     </div>
                   </td>
                 </tr>

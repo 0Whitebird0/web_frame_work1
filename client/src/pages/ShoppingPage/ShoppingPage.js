@@ -1,22 +1,35 @@
 // ...existing code...
-import React, { useState, useMemo } from 'react';
-
-const initialProducts = [
-  { id: 1, name: '돼지고기', price: 9000, image: null },
-  { id: 2, name: '표고버섯', price: 3000, image: null },
-  { id: 3, name: '양파', price: 1500, image: null },
-  { id: 4, name: '감자', price: 1200, image: null },
-  { id: 5, name: '방울토마토', price: 4500, image: null },
-];
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 
 function formatKRW(n) {
   return '₩' + n.toLocaleString('ko-KR');
 }
 
 const ShoppingPage = () => {
-  const [products] = useState(initialProducts);
+  const [products, setProducts] = useState([]); // 초기값 빈 배열로 변경
   const [query, setQuery] = useState('');
   const [cart, setCart] = useState([]); // {id, productId, qty}
+
+  // 백엔드로부터 재료 목록을 가져오는 useEffect
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/ingredients/');
+        // API 응답 데이터를 products 상태에 맞게 매핑
+        const mappedProducts = response.data.ingredients.map(ing => ({
+          id: ing.ingredient_id,
+          name: ing.name,
+          price: ing.price,
+          image: ing.img, // img 필드를 image로 매핑
+        }));
+        setProducts(mappedProducts);
+      } catch (error) {
+        console.error("재료 목록을 가져오는데 실패했습니다.", error);
+      }
+    };
+    fetchIngredients();
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -53,14 +66,30 @@ const ShoppingPage = () => {
 
   const totalPrice = cartItems.reduce((s, it) => s + (it.product.price || 0) * it.qty, 0);
 
-  const handleBuy = () => {
+  const handleBuy = async () => { // async 추가
     if (cartItems.length === 0) {
       alert('장바구니가 비어있습니다.');
       return;
     }
-    // 실제 결제 로직은 사용자가 구현
-    alert(`구매 처리: 총 ${formatKRW(totalPrice)}`);
-    setCart([]);
+
+    const purchaseData = cartItems.map(item => ({
+      ingredient_id: item.productId, // API는 ingredient_id를 기대
+      quantity: item.qty,
+    }));
+
+    try {
+      // TODO: 로그인 기능 구현 후 user_id 동적으로 받아오기
+      const response = await axios.post('http://localhost:8000/api/shopping/', {
+        user_id: 'minjae01', // 고정 사용자 ID
+        items: purchaseData,
+      });
+
+      alert(response.data.message); // 백엔드로부터 받은 메시지 표시
+      setCart([]); // 장바구니 비우기
+    } catch (error) {
+      console.error("구매 처리 중 오류 발생:", error.response ? error.response.data : error);
+      alert("구매 처리 중 오류가 발생했습니다: " + (error.response ? error.response.data.error : error.message));
+    }
   };
 
   return (
@@ -81,7 +110,7 @@ const ShoppingPage = () => {
           </div>
 
           {/* 제품 리스트 */}
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-3 max-h-96 overflow-y-auto">
             {filtered.map((p) => (
               <div key={p.id} className="flex items-center gap-4 p-3 border rounded">
                 <div className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center text-gray-400 overflow-hidden">
