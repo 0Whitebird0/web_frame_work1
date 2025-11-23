@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import "./../css/RecipeCard.css";
-import { FaRegStar, FaStar } from "react-icons/fa"; // 별 아이콘
+import { FaRegStar, FaStar } from "react-icons/fa";
 
 const RecipeCard = ({ data, onFavoriteToggle }) => {
-  const [favorite, setFavorite] = useState(data.favorite || false);
+  // Django에서 내려준 초기 favorite 값
+  const [favorite, setFavorite] = useState(data.favorite);
 
   const toggleFavorite = () => {
-    const newValue = !favorite;
-    setFavorite(newValue);
-    onFavoriteToggle(data.id, newValue); // 부모에게 알려주기
+    // UI 즉시 반영
+    setFavorite(!favorite);
+
+    // Django API 호출 (팀원 방식)
+    onFavoriteToggle(data.id);
   };
 
   return (
@@ -16,12 +19,13 @@ const RecipeCard = ({ data, onFavoriteToggle }) => {
       
       {/* 이미지 영역 */}
       <div className="recipe-card-img">
+
         {/* 즐겨찾기 별 */}
         <div className="favorite-icon" onClick={toggleFavorite}>
           {favorite ? <FaStar color="#f1c40f" /> : <FaRegStar />}
         </div>
 
-        {/* Django 이미지 들어올 자리 */}
+        {/* Django 이미지 */}
         {data.image ? (
           <img src={data.image} alt={data.name} />
         ) : (
@@ -32,7 +36,15 @@ const RecipeCard = ({ data, onFavoriteToggle }) => {
       {/* 텍스트 영역 */}
       <div className="recipe-card-info">
         <div className="recipe-name">{data.name}</div>
-        <div className="recipe-ingredients">{data.ingredients}</div>
+
+        {/* ingredients 표시 (너 디자인 유지) */}
+        {data.ingredients && (
+          <div className="recipe-ingredients">
+            {Array.isArray(data.ingredients)
+              ? data.ingredients.join(", ")
+              : data.ingredients}
+          </div>
+        )}
       </div>
 
     </div>
