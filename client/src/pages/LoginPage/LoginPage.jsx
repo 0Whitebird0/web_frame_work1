@@ -10,7 +10,7 @@ export default function LoginPage() {
       <div className="auth-col">
         <Login />
         <div className="signup-link">
-          <Link to="/signup">회원가입</Link>
+          
         </div>
       </div>
     </div>
