@@ -40,11 +40,11 @@ export default function Signup() {
       });
 
       if (res.status === 201) {
-        localStorage.clear();
+        // (선택) 필요하면 clear 제거해도 됨
         localStorage.setItem("user_id", res.data.user_id);
-        localStorage.setItem("name", res.data.name);     
-       navigate("/upload");
+        localStorage.setItem("name", res.data.name);
 
+        navigate("/upload");
       }
     } catch (err) {
       if (err.response?.data?.error) setError(err.response.data.error);
@@ -145,12 +145,10 @@ export default function Signup() {
       </div>
 
       <div className="signup-actions">
-        <Link to="/upload">
         <button className="signup-btn" onClick={handleSignup}>
           next
         </button>
-          </Link>
-        {/* ⚠️ 에러 메시지 표시 */}
+
         {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
 
         <div className="signup-bottom">

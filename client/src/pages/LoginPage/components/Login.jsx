@@ -33,8 +33,7 @@ export default function Login() {
       setShowToast(true);
       setError("");
 
-      // 사용자 정보 저장
-      localStorage.clear();
+      // 사용자 정보 저장 (clear ❌)
       localStorage.setItem("user_id", res.data.user_id);
       localStorage.setItem("name", res.data.name);
 
