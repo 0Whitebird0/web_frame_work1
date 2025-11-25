@@ -35,6 +35,7 @@ const RecognizedIngredientsPage = () => {
       ...item,
       quantity,
       unit,
+      isEditing: false,   // ✅ 수량 직접 입력 모드 플래그
     };
   });
 
@@ -72,6 +73,7 @@ const RecognizedIngredientsPage = () => {
       ingredient_img: ing.ingredient_img || null,
       quantity: 1,
       unit: ing.unit || '',
+      isEditing: false,   // ✅ 새로 추가된 재료도 기본값 false
     }));
 
     setItems((prev) => [...prev, ...newItems]);
@@ -111,10 +113,63 @@ const RecognizedIngredientsPage = () => {
                   -
                 </button>
 
-                <span className="quantity-text">
-                  {item.quantity}
-                  {item.unit}
-                </span>
+                {/* ✅ 여기만 수정: 수량 더블클릭 → 직접 입력 */}
+                {item.isEditing ? (
+                  <input
+                    type="text"
+                    value={item.quantity}
+                    autoFocus
+                    onBlur={() =>
+                      setItems((prev) =>
+                        prev.map((it, i) =>
+                          i === idx ? { ...it, isEditing: false } : it
+                        )
+                      )
+                    }
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9]/g, '');
+                      setItems((prev) =>
+                        prev.map((it, i) =>
+                          i === idx
+                            ? { ...it, quantity: v === '' ? '' : Number(v) }
+                            : it
+                        )
+                      );
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setItems((prev) =>
+                          prev.map((it, i) =>
+                            i === idx ? { ...it, isEditing: false } : it
+                          )
+                        );
+                      }
+                    }}
+                    className="quantity-input"
+                    style={{
+                      width: '40px',
+                      textAlign: 'center',
+                      fontSize: '14px',
+                      border: '1px solid #ccc',
+                      borderRadius: '6px',
+                    }}
+                  />
+                ) : (
+                  <span
+                    className="quantity-text"
+                    onDoubleClick={() =>
+                      setItems((prev) =>
+                        prev.map((it, i) =>
+                          i === idx ? { ...it, isEditing: true } : it
+                        )
+                      )
+                    }
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                  >
+                    {item.quantity}
+                    {item.unit}
+                  </span>
+                )}
 
                 <button
                   onClick={() => increaseAmount(idx)}
