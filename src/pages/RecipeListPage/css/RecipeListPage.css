@@ -1,0 +1,82 @@
+/* ⭐ 상세 모달 (추가) */
+.recipe-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* 화면 가장 위로 */
+}
+
+.recipe-modal {
+  width: 340px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0px 8px 18px rgba(0,0,0,0.15);
+  animation: modal-pop 0.2s ease-out;
+}
+
+@keyframes modal-pop {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.close-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #79AC78;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/*여기까지가 모달*/
+
+.recipe-list-container {
+  padding-top: 130px; /* 네비게이션 바 피하기 */
+   padding-left: 30px;
+  padding-right: 30px;
+  max-width: 1600px;
+  margin: 0 auto; /* 화면 가운데 정렬 */
+}
+
+.search-bar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.search-bar input {
+  width: 300px;
+  padding: 10px 36px 10px 14px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  background: #f4f4f4;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-bar input:focus {
+  border-color: #79AC78; /* 포커스 색깔 */
+}
+
+.search-bar .search-icon {
+  position: relative;
+  left: -28px;
+  top: 12px;
+  font-size: 16px;
+  color: #888;
+  cursor: pointer;
+}
