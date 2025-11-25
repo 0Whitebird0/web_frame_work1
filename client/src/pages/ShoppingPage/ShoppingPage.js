@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
 
 function formatKRW(n) {
+  if (n == null || isNaN(n)) return "₩0";
   return '₩' + n.toLocaleString('ko-KR');
 }
 
